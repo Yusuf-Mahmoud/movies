@@ -12,15 +12,6 @@ class AppTheme {
       backgroundColor: black  ,
       unselectedItemColor: white,
     ),
-    appBarTheme: AppBarTheme(
-      backgroundColor: Colors.transparent,
-      centerTitle: true,
-      titleTextStyle: TextStyle(
-        color: black,
-        fontSize: 30,
-        fontWeight: FontWeight.bold,
-      ),
-    ),
     textTheme: TextTheme(
       headlineSmall: TextStyle(
         fontSize: 20,
