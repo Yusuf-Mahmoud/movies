@@ -1,3 +1,4 @@
+
 import 'dart:math';
 
 import 'package:dio/dio.dart';
@@ -26,7 +27,7 @@ class MoviesProvider extends ChangeNotifier {
   //baseScreen
 
   int _screenIndex = 0;
-  get screenIndex => _screenIndex;
+  int get screenIndex => _screenIndex;
 
   setScreenIndex(int index) {
     _screenIndex = index;
@@ -35,59 +36,69 @@ class MoviesProvider extends ChangeNotifier {
   }
 
   final List<Widget> _screens = [
-    MoviesHome(),
+     MoviesHome(),
     const MoviesSearch(),
     const MoviesCategories(),
     const MoviesWatchlist(),
   ];
 
-  get screens => _screens;
+  List<Widget> get screens => _screens;
 
   final PageController _pageController = PageController();
-  get pageController => _pageController;
+  PageController get pageController => _pageController;
 
   List<Movie> _popularMovies = [];
-  get popularMovies => _popularMovies;
+  List<Movie> get popularMovies => _popularMovies;
 
   List<Movie> _newReleasesMovies = [];
-  get newReleasesMovies => _newReleasesMovies;
+  List<Movie> get newReleasesMovies => _newReleasesMovies;
 
   List<Movie> _recommendedMovies = [];
-  get recommendedMovies => _recommendedMovies;
+  List<Movie> get recommendedMovies => _recommendedMovies;
 
   Dio dio = Dio();
 
   int _randomPopularMovie = 0;
-  get randomPopularMovie => _randomPopularMovie;
+  int get randomPopularMovie => _randomPopularMovie;
 
   setRandomPopularMovie() {
     _randomPopularMovie = Random().nextInt(_popularMovies.length);
     notifyListeners();
   }
 
-  String convertString(String dateString) {
+  String convertString(String? dateString) {
+    if (dateString == null) {
+      return '';
+    }
     DateTime date = DateTime.parse(dateString);
     return date.year.toString();
   }
 
   bool _popularMoviesLoading = true;
-  get popularMoviesLoading => _popularMoviesLoading;
+  bool get popularMoviesLoading => _popularMoviesLoading;
 
   bool _newReleasesMoviesLoading = true;
-  get newReleasesMoviesLoading => _newReleasesMoviesLoading;
+  bool get newReleasesMoviesLoading => _newReleasesMoviesLoading;
 
   bool _recommendedMoviesLoading = true;
-  get recommendedMoviesLoading => _recommendedMoviesLoading;
+  bool get recommendedMoviesLoading => _recommendedMoviesLoading;
 
   int _movieDetailsIndex = 0;
-  get movieDetailsIndex => _movieDetailsIndex;
+  int get movieDetailsIndex => _movieDetailsIndex;
 
-  Future<void> setMovieDetailsIndex(int val) async {
+  Future<void> setMovieDetailsIndex(int? val) async {
+    if (val == null) {
+      return;
+    }
+
     _movieDetailsIndex = val;
     notifyListeners();
   }
 
-  String formatDuration(int minutes) {
+  String formatDuration(int? minutes) {
+    if (minutes == null) {
+      return '';
+    }
     if (minutes < 0) {
       throw ArgumentError('Duration must be a non-negative integer.');
     }
@@ -102,18 +113,18 @@ class MoviesProvider extends ChangeNotifier {
   }
 
   MovieDetails? _movieDetail;
-  get movieDetail => _movieDetail;
+  MovieDetails? get movieDetail => _movieDetail;
 
   bool _movieDetailLoading = true;
-  get movieDetailLoading => _movieDetailLoading;
+  bool get movieDetailLoading => _movieDetailLoading;
 
   Future<void> getMovieDetail() async {
     _movieDetailLoading = true;
 
-    print(_movieDetailsIndex);
     await dio
         .get(
-            'https://api.themoviedb.org/3/movie/${_movieDetailsIndex}?api_key=${AppConstants.api_key}')
+          'https://api.themoviedb.org/3/movie/$_movieDetailsIndex?api_key=${AppConstants.apiKey}',
+        )
         .then((value) {
           _movieDetail = MovieDetails.fromJson(value.data);
         })
@@ -126,7 +137,7 @@ class MoviesProvider extends ChangeNotifier {
     // notifyListeners();
     await dio
         .get(
-          'https://api.themoviedb.org/3/movie/popular?api_key=${AppConstants.api_key}&language=en-US&page=1',
+          'https://api.themoviedb.org/3/movie/popular?api_key=${AppConstants.apiKey}&language=en-US&page=1',
         )
         .then((value) {
           _popularMovies = (value.data['results'] as List)
@@ -143,7 +154,7 @@ class MoviesProvider extends ChangeNotifier {
     notifyListeners();
     await dio
         .get(
-          'https://api.themoviedb.org/3/movie/upcoming?api_key=${AppConstants.api_key}&language=en-US&page=1',
+          'https://api.themoviedb.org/3/movie/upcoming?api_key=${AppConstants.apiKey}&language=en-US&page=1',
         )
         .then((value) {
           _newReleasesMovies = (value.data['results'] as List)
@@ -159,7 +170,7 @@ class MoviesProvider extends ChangeNotifier {
     notifyListeners();
     await dio
         .get(
-          'https://api.themoviedb.org/3/movie/top_rated?api_key=${AppConstants.api_key}&language=en-US&page=1',
+          'https://api.themoviedb.org/3/movie/top_rated?api_key=${AppConstants.apiKey}&language=en-US&page=1',
         )
         .then((value) {
           _recommendedMovies = (value.data['results'] as List)
@@ -167,6 +178,33 @@ class MoviesProvider extends ChangeNotifier {
               .toList();
         })
         .then((value) => _recommendedMoviesLoading = false)
+        .then((value) => notifyListeners());
+  }
+
+  List<Movie> _similarMovies = [];
+  List<Movie> get similarMovies => _similarMovies;
+
+  bool _similarMoviesLoading = true;
+  bool get similarMoviesLoading => _similarMoviesLoading;
+  Future<void> getSimilarMovies() async {
+    _similarMoviesLoading = true;
+    await dio
+        .get(
+          'https://api.themoviedb.org/3/movie/$_movieDetailsIndex/similar?api_key=${AppConstants.apiKey}&language=en-US&page=1',
+        )
+        .then((value) {
+          //CHECK IF THE MOVIE HAS SIMILAR MOVIES
+          if (value.data['results'] == null ||
+              value.data['results'].length == 0) {
+            _similarMovies = [];
+            notifyListeners();
+            return;
+          }
+          _similarMovies = (value.data['results'] as List)
+              .map((e) => Movie.fromJson(e))
+              .toList();
+        })
+        .then((value) => _similarMoviesLoading = false)
         .then((value) => notifyListeners());
   }
 }

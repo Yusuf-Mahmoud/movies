@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:movie_app/MoviesPorvider.dart';
 import 'package:movie_app/MoviesSplash/view.dart';

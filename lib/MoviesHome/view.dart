@@ -6,6 +6,8 @@ import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 
 class MoviesHome extends StatelessWidget {
+  const MoviesHome({super.key});
+
   @override
   Widget build(BuildContext context) {
     var mediaQuery = MediaQuery.of(context);
@@ -70,7 +72,7 @@ class MoviesHome extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                "name of movie",
+                                'name of movie',
                                 style: TextStyle(
                                   color: AppColors().white,
                                   fontSize: 16,
@@ -78,7 +80,7 @@ class MoviesHome extends StatelessWidget {
                                 ),
                               ),
                               Text(
-                                "2020",
+                                '2020',
                                 style: TextStyle(
                                   color: AppColors().offWhite,
                                   fontSize: 14,
@@ -109,7 +111,8 @@ class MoviesHome extends StatelessWidget {
                                   (value) => Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => MovieDetails(),
+                                      builder: (context) =>
+                                          const MovieDetails(),
                                     ),
                                   ),
                                 );
@@ -118,7 +121,7 @@ class MoviesHome extends StatelessWidget {
                             decoration: BoxDecoration(
                               image: DecorationImage(
                                 image: NetworkImage(
-                                  'https://image.tmdb.org/t/p/original/${provider.popularMovies[provider.randomPopularMovie ?? 0].backdropPath ?? provider.popularMovies[provider.randomPopularMovie].posterPath}',
+                                  'https://image.tmdb.org/t/p/original/${provider.popularMovies[provider.randomPopularMovie].backdropPath ?? provider.popularMovies[provider.randomPopularMovie].posterPath}',
                                 ),
                                 fit: BoxFit.cover,
                               ),
@@ -170,8 +173,10 @@ class MoviesHome extends StatelessWidget {
                             children: [
                               Text(
                                 provider
-                                    .popularMovies[provider.randomPopularMovie]
-                                    .title,
+                                        .popularMovies[
+                                            provider.randomPopularMovie]
+                                        .title ??
+                                    '',
                                 style: TextStyle(
                                   color: AppColors().white,
                                   fontSize: 16,
@@ -215,7 +220,7 @@ class MoviesHome extends StatelessWidget {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 10,
                         ),
                         Expanded(
@@ -284,7 +289,7 @@ class MoviesHome extends StatelessWidget {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 10,
                         ),
                         Expanded(
@@ -303,7 +308,7 @@ class MoviesHome extends StatelessWidget {
                                           context,
                                           MaterialPageRoute(
                                             builder: (context) =>
-                                                MovieDetails(),
+                                                const MovieDetails(),
                                           ),
                                         ),
                                       );
@@ -367,7 +372,7 @@ class MoviesHome extends StatelessWidget {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 10,
                         ),
                         Expanded(
@@ -436,7 +441,7 @@ class MoviesHome extends StatelessWidget {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 10,
                         ),
                         Expanded(
@@ -455,7 +460,7 @@ class MoviesHome extends StatelessWidget {
                                           context,
                                           MaterialPageRoute(
                                             builder: (context) =>
-                                                MovieDetails(),
+                                                const MovieDetails(),
                                           ),
                                         ),
                                       );
